@@ -1,7 +1,7 @@
 <?php
 /*
-plugin name: Fow Files
-description: insert data from textbox into database
+plugin name: Fow File Extensions
+description: insert file extensions data from textbox into database
 author: SK Ghosh
 author uri: http://facebook.com/sudayghosh
 */
@@ -53,7 +53,6 @@ class FileExtension {
                     $extension = strtolower( str_replace( ".", "", trim( $extension ) ) );
 
                     $ext_id = $this->get_file_id($extension);
-                    echo $ext_id;
                     if ( $ext_id == -1 ) {
                         $has_details_ext = false;
 
@@ -101,7 +100,8 @@ class FileExtension {
                             }
                         }
                         if($has_details_ext == true){
-                            $this->create_post($extension);
+                            $short_code = '[file_extension_renderer id="' . $ext_id .'"]';
+                            $this->create_post($extension, $short_code);
                         }
                     }
                 }
@@ -124,11 +124,11 @@ class FileExtension {
         <?php
     }
 
-    function create_post($title){
+    function create_post($title, $content = null){
         global $user_ID;
         $new_post = array(
         'post_title' => $title,
-        'post_content' => 'Lorem ipsum dolor sit amet...',
+        'post_content' => $content,
         'post_status' => 'publish',
         'post_date' => date('Y-m-d H:i:s'),
         'post_author' => $user_ID,
@@ -143,7 +143,6 @@ class FileExtension {
         $id  = -1;
 
         $sql = "SELECT id FROM " . $wpdb->prefix . "fow_files WHERE extension = '$name' LIMIT 1";
-        echo $sql;
         $row = $wpdb->get_row( $sql );
         if (empty($row)) {
             return $id;
