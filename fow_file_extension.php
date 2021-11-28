@@ -125,9 +125,11 @@ class FileExtension {
     }
 
     function create_post($title, $content = null){
+        $file_open_with_txt = 'File Open With';
         global $user_ID;
         $new_post = array(
-        'post_title' => $title,
+        'post_title' => '.' . strtoupper( $title ) . ' ' . $file_open_with_txt,
+        'post_name' => $title,
         'post_content' => $content,
         'post_status' => 'publish',
         'post_date' => date('Y-m-d H:i:s'),

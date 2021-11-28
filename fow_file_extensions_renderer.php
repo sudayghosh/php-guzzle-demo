@@ -12,6 +12,7 @@ require_once($path.'/wp-load.php');
 require 'vendor/autoload.php';
 
 function file_extension_renderer_content($atts, $content = null){
+    $file_open_with_txt = 'File Open With';
     $default = array(
         'id' => '-1',
     );
@@ -30,7 +31,7 @@ function file_extension_renderer_content($atts, $content = null){
     $file_types_id = 0;
     $file_oss_id = 0;
     $program_id = 0;
-    $html = '<ul>';
+    $html = '';
     $rows = $wpdb->get_results($sql);
     foreach($rows as $row){  
         $tmp_ext_id = $row->ext_id;
@@ -40,42 +41,29 @@ function file_extension_renderer_content($atts, $content = null){
 
         if($ext_id != $tmp_ext_id){
             $ext_id = $tmp_ext_id;
-            $html = $html . '<li>' . $row->extension . '</li>';
-            $html = $html . '<ul>';
         }
         if($file_types_id == 0){
             $file_types_id = $tmp_file_types_id;
-            $html = $html . '<li>' . $row->file_types_name . '</li>';
-            $html = $html . '<ul>';
+            $html = $html . '<h2>.' . strtoupper( $row->extension ) . ' ' . $row->file_types_name . '</h2>';
         }
         if($file_types_id != $tmp_file_types_id){
-            $html = $html . '</ul></ul>';
             $file_types_id = $tmp_file_types_id;
-            $html = $html . '<li>' . $row->file_types_name . '</li>';
-            $html = $html . '<ul>';
+            $html = $html . '<h2>.' . strtoupper( $row->extension ) . ' ' . $row->file_types_name . '</h2>';
             $file_oss_id = 0;
         }
         if($file_oss_id == 0){
             $file_oss_id = $tmp_file_oss_id;
-            $html = $html . '<li>' . $row->file_oss_name . '</li>';
-            $html = $html . '<ul>';
+            $html = $html . '<h3>In ' . $row->file_oss_name . ' .'. strtoupper( $row->extension ) . ' ' . $file_open_with_txt . '</h3>';
         }
         if($file_oss_id != $tmp_file_oss_id){
-            $html = $html . '</ul>';
             $file_oss_id = $tmp_file_oss_id;
-            $html = $html . '<li>' . $row->file_oss_name . '</li>';
-            $html = $html . '<ul>';
+            $html = $html . '<h3>In ' . $row->file_oss_name . ' .'. strtoupper( $row->extension ) . ' ' . $file_open_with_txt . '</h3>';
         }
         if($program_id != $tmp_program_id){
             $program_id = $tmp_program_id;
-            $html = $html . '<li>' . $row->program_name . '</li>';
-        }
-        else {
-            $html = $html . '</ul>';
+            $html = $html . '<div>' . $row->program_name . '</div>';
         }
     }
-    $html = $html . '</ul>';
-
     return $html;
 }
 add_shortcode('file_extension_renderer', 'file_extension_renderer_content'); 
