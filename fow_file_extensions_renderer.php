@@ -20,12 +20,13 @@ function file_extension_renderer_content($atts, $content = null){
 
     $id = $a['id'];
     global $wpdb;
+    $table_prefix = $wpdb->prefix;
 
     $sql = "SELECT ff.id as ext_id, ff.extension, fft.id AS file_types_id, fft.name as file_types_name, " .
             "fo.id as file_oss_id, fo.name as file_oss_name, fp.id as program_id, fp.name as program_name " .
-            "FROM wp_fow_open_details AS fod INNER JOIN wp_fow_files AS ff ON fod.file_id = ff.id " .
-            "INNER JOIN wp_fow_file_types AS fft ON fod.file_types_id = fft.id INNER JOIN wp_fow_oss AS fo ON fod.os_id = fo.id " .
-            "INNER JOIN wp_fow_programs AS fp ON fod.program_id = fp.id where fod.file_id = " . $id . ";";
+            "FROM " . $table_prefix . "fow_open_details AS fod INNER JOIN " . $table_prefix . "fow_files AS ff ON fod.file_id = ff.id " .
+            "INNER JOIN " . $table_prefix . "fow_file_types AS fft ON fod.file_types_id = fft.id INNER JOIN " . $table_prefix . "fow_oss AS fo ON fod.os_id = fo.id " .
+            "INNER JOIN " . $table_prefix . "fow_programs AS fp ON fod.program_id = fp.id where fod.file_id = " . $id . ";";
 
     $ext_id = 0;
     $file_types_id = 0;

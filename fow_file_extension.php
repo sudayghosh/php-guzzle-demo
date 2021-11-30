@@ -32,6 +32,7 @@ class FileExtension {
 
         if(isset($_POST['execute'])){
             global $wpdb;
+            $table_prefix = $wpdb->prefix;
 
             $urls = $_POST['urls'];
             $split_urls = explode(" ", $urls);
@@ -56,7 +57,7 @@ class FileExtension {
                     if ( $ext_id == -1 ) {
                         $has_details_ext = false;
 
-                        $wpdb->insert('wp_fow_files', array('extension'=>$extension, 'icon'=>''));
+                        $wpdb->insert( $wpdb->prefix . 'fow_files', array('extension'=>$extension, 'icon'=>'') );
                         $ext_id = $wpdb->insert_id;
 
                         $sections = $xpath->query('//div[@id="left"]//article//section');
@@ -68,7 +69,7 @@ class FileExtension {
 
                                 $file_type_id = $this->get_file_type_id($file_type);
                                 if ( $file_type_id == -1 ) {
-                                    $wpdb->insert('wp_fow_file_types', array('name'=>$file_type, 'icon'=>''));
+                                    $wpdb->insert( $table_prefix . 'fow_file_types', array('name'=>$file_type, 'icon'=>'') );
                                     $file_type_id = $wpdb->insert_id;
                                 }
 
@@ -79,7 +80,7 @@ class FileExtension {
 
                                     $platform_id = $this->get_oss_id($platform);
                                     if ( $platform_id == -1 ) {
-                                        $wpdb->insert('wp_fow_oss', array('name'=>$platform, 'icon'=>''));
+                                        $wpdb->insert( $table_prefix . 'fow_oss', array('name'=>$platform, 'icon'=>'') );
                                         $platform_id = $wpdb->insert_id;
                                     }
 
@@ -89,11 +90,11 @@ class FileExtension {
 
                                         $program_id = $this->get_program_id($app);
                                         if ( $program_id == -1 ) {
-                                            $wpdb->insert('wp_fow_programs', array('name'=>$app, 'icon'=>''));
+                                            $wpdb->insert( $table_prefix . 'fow_programs', array('name'=>$app, 'icon'=>'') );
                                             $program_id = $wpdb->insert_id;
                                         }
 
-                                        $wpdb->insert('wp_fow_open_details', array('file_id'=>$ext_id, 'file_types_id'=>$file_type_id, 'os_id'=>$platform_id, 'program_id'=>$program_id));
+                                        $wpdb->insert( $table_prefix . 'fow_open_details', array('file_id'=>$ext_id, 'file_types_id'=>$file_type_id, 'os_id'=>$platform_id, 'program_id'=>$program_id));
                                         $has_details_ext = true;
                                     }
                                 }
