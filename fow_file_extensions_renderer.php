@@ -34,7 +34,10 @@ function file_extension_renderer_content($atts, $content = null){
     $program_id = 0;
     $html = '';
     $rows = $wpdb->get_results($sql);
+    //echo $rows;
+
     foreach($rows as $row){  
+
         $tmp_ext_id = $row->ext_id;
         $tmp_file_types_id = $row->file_types_id;
         $tmp_file_oss_id = $row->file_oss_id;
@@ -44,26 +47,37 @@ function file_extension_renderer_content($atts, $content = null){
             $ext_id = $tmp_ext_id;
         }
         if($file_types_id == 0){
-            $file_types_id = $tmp_file_types_id;
-            $html = $html . '<h2>.' . strtoupper( $row->extension ) . ' ' . $row->file_types_name . '</h2>';
+            $file_types_id = $tmp_file_types_id;            
+            $html .= '<h2>.' . strtoupper( $row->extension ) . ' <i>File Type</i> - <b>' . $row->file_types_name . '</b></h2>';
         }
-        if($file_types_id != $tmp_file_types_id){
-            $file_types_id = $tmp_file_types_id;
-            $html = $html . '<h2>.' . strtoupper( $row->extension ) . ' ' . $row->file_types_name . '</h2>';
+        if($file_types_id != $tmp_file_types_id){            
+            $file_types_id = $tmp_file_types_id;            
+            $html .= '<h2>.' . strtoupper( $row->extension ) . ' <i>File Type</i> - <b>' . $row->file_types_name . '</b></h2>';            
             $file_oss_id = 0;
         }
         if($file_oss_id == 0){
             $file_oss_id = $tmp_file_oss_id;
-            $html = $html . '<h3>In ' . $row->file_oss_name . ' .'. strtoupper( $row->extension ) . ' ' . $file_open_with_txt . '</h3>';
+            $html = $html . '<h3>In <b>' . $row->file_oss_name . '</b> .'. strtoupper( $row->extension ) . ' ' . $file_open_with_txt . '</h3>';
         }
+
         if($file_oss_id != $tmp_file_oss_id){
             $file_oss_id = $tmp_file_oss_id;
-            $html = $html . '<h3>In ' . $row->file_oss_name . ' .'. strtoupper( $row->extension ) . ' ' . $file_open_with_txt . '</h3>';
+            $html = $html . '<h3>In <b>' . $row->file_oss_name . '</b> .'. strtoupper( $row->extension ) . ' ' . $file_open_with_txt . '</h3>';
+            $html .= '<ul>';
         }
+
         if($program_id != $tmp_program_id){
-            $program_id = $tmp_program_id;
-            $html = $html . '<div>' . $row->program_name . '</div>';
+            $program_id = $tmp_program_id;            
+            $html = $html . '<li>' . $row->program_name . '</li>';
         }
+        else
+        {
+            $html = $html . '<li>' . $row->program_name . '</li>';
+           // $html = $html . '</ul>';
+            //$html = $html . '<div>' . $row->program_name . '</div>'  
+
+        }
+
     }
     return $html;
 }
