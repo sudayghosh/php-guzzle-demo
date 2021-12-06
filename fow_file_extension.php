@@ -35,35 +35,56 @@ class FileExtension {
             $table_prefix = $wpdb->prefix;
 
             $urls = $_POST['urls'];
-            $split_urls = explode(" ", $urls);
+            $split_urls = explode("\n", $urls);
 
             foreach ($split_urls as $url) {
+                //echo $url;
+                //echo '<br>';
+
+               
                 $httpClient = new \GuzzleHttp\Client();
-                $response = $httpClient->get($url);
+                $response = $httpClient->get(trim($url));
                 $htmlString = (string) $response->getBody();
-                // print $htmlString;
+                //print $htmlString;
                 //add this line to suppress any warnings
                 libxml_use_internal_errors(true);
                 $doc = new DOMDocument();
-                $doc->loadHTML($htmlString);
+                $doc->loadHTML($htmlString);               
                 $xpath = new DOMXPath($doc);
 
                 $extensions = $xpath->query('//div[@id="left"]//article//h1/text()');
+                // print_r ($extensions);
+                // print_r ('<br>');
                 foreach ($extensions as $ext) {
                     $extension = $ext->textContent.PHP_EOL;
                     $extension = strtolower( str_replace( ".", "", trim( $extension ) ) );
+                    // print_r ($extension);
+                    // print_r ('<br>');
 
                     $ext_id = $this->get_file_id($extension);
+                    // print_r ($ext_id);
+                    // print_r ('<br>');
+
                     if ( $ext_id == -1 ) {
                         $has_details_ext = false;
 
                         $wpdb->insert( $wpdb->prefix . 'fow_files', array('extension'=>$extension, 'icon'=>'') );
                         $ext_id = $wpdb->insert_id;
 
+                        // print_r ($ext_id);
+                        // print_r ('<br>');
+
                         $sections = $xpath->query('//div[@id="left"]//article//section');
+                        // print_r ($sections);
+                        // print_r ('<br>');
+                        
                         foreach ($sections as $section) {
                             $section_id = $section->getAttribute('id');
+                            // print_r ($section_id);
+                            // print_r ('<br>');
                             $file_types = $xpath->query('//section[@id="'.$section_id.'"]//div[@class="entryHeader"]//h2[@class="title"]/text()');
+                            // print_r ($file_types);
+                            // print_r ('<br>');
                             foreach ($file_types as $type) {
                                 $file_type = trim($type->textContent.PHP_EOL);
 
@@ -77,18 +98,30 @@ class FileExtension {
                                 foreach ($platform_wrapper as $p) {
 
                                     $platform = trim( $xpath->query('div[@class="platform"]/text()', $p)[0]->textContent.PHP_EOL );
-
+                                    // print_r ($platform);
+                                    // print_r ('-platform-<br>');
                                     $platform_id = $this->get_oss_id($platform);
+                                    // print_r ($platform_id);
+                                    // print_r ('-platform_id-<br>');
                                     if ( $platform_id == -1 ) {
                                         $wpdb->insert( $table_prefix . 'fow_oss', array('name'=>$platform, 'icon'=>'') );
                                         $platform_id = $wpdb->insert_id;
                                     }
 
+                                    // print_r ($p);
+                                    // print_r ('-p-<br>');
+
                                     $apps = $xpath->query('div[@class="apps"]//div[@class="app"]//div/div//a[1]/text()', $p);
+                                    // print_r ($apps);
+                                    // print_r ('-apps-<br>');
+                                    
                                     foreach ($apps as $a) {
                                         $app = trim( $a->textContent.PHP_EOL );
-
+                                        // print_r ($app);
+                                        // print_r ('-app-<br>');
                                         $program_id = $this->get_program_id($app);
+                                        // print_r ($program_id);
+                                        // print_r ('<br>');
                                         if ( $program_id == -1 ) {
                                             $wpdb->insert( $table_prefix . 'fow_programs', array('name'=>$app, 'icon'=>'') );
                                             $program_id = $wpdb->insert_id;
@@ -105,10 +138,10 @@ class FileExtension {
                             $this->create_post($extension, $short_code);
                         }
                     }
-                }
+                }/* */
             }
             ?>
-            <label>Executed successfully</label>
+            <label><br>Executed successfully</label>
             <?php            
         }
         ?>
